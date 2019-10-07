@@ -2,8 +2,15 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.*;
 
 public class fileRead{
+
+	static String stateSet;
+	static String alphabetSet;
+	static String iniStateSet;
+	static String finStateSet;
+	static LinkedList<String> transitions = new LinkedList<String>();
 
 	public fileRead(String filename){
 		try{
@@ -41,11 +48,6 @@ public class fileRead{
 	}
 
 	public static void main(String[] args) {
-		String stateSet;
-		String alphabetSet;
-		String iniStateSet;
-		String finStateSet;
-		LinkedList<String> transitions = new LinkedList<String>();
 		fileRead fReader = new fileRead("samplehahae.txt");
 		System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\n initial State Set: " + iniStateSet + "\n final State Set: " + finStateSet + "\n transition Sets: " + transitions);
 	}
