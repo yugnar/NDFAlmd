@@ -48,7 +48,16 @@ public class fileRead{
 	}
 
 	public static void main(String[] args) {
+
 		fileRead fReader = new fileRead("samplehahae.txt");
-		System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\n initial State Set: " + iniStateSet + "\n final State Set: " + finStateSet + "\n transition Sets: " + transitions);
+		System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\nInitial State Set: " + iniStateSet + "\nFinal State Set: " + finStateSet + "\nTransition Sets: " + transitions);
+		
+		List<String> stateList = Arrays.asList(stateSet.split("\\s*,\\s*"));
+		System.out.println("Array of states: " + stateList + " where the first state is exclusively: " + stateList.get(0) + " and the second one is: " + stateList.get(1));
+		List<String> alphabetList = Arrays.asList(alphabetSet.split("\\s*,\\s*"));
+		List<String> iniStateList = Arrays.asList(iniStateSet.split("\\s*,\\s*"));
+
+
+
 	}
 }
