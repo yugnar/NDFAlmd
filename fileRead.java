@@ -82,13 +82,18 @@ public class fileRead{
 
 		//Construction of Transition Table
 
-		int[][] transitionTable = new int[stateList.size()][alphabetList.size()+1];
+		ResultSet[][] transitionTable = new ResultSet[stateList.size()][alphabetList.size()+1];
+
 		for(int i=0; i<stateList.size(); i++){
 			for(int j=0; j<alphabetList.size()+1; j++){
-				transitionTable[i][j] = -1;
-			}
+				if(j == alphabetList.size()){
+					transitionTable[i][j] = new ResultSet(true, i);
+				}
+				else{
+					transitionTable[i][j] = new ResultSet(false, i);
+				}
+ 			}
 		}
-
 
 		for(int i=0; i<transitionList.length; i++){
 			//Origin transitionList[i].getOrigin()   transitionList[i].getInput()
@@ -107,12 +112,12 @@ public class fileRead{
 			sb = new StringBuilder(transitionList[i].getDestination());
 			sb.deleteCharAt(0);
 			int functionResult = Integer.parseInt(sb.toString());
-			transitionTable[rowIndex][columnIndex] = functionResult;
+			transitionTable[rowIndex][columnIndex].addToList(functionResult);
 		}
 
 		for(int i=0; i<stateList.size(); i++){
 			for(int j=0; j<alphabetList.size()+1; j++){
-				System.out.print(transitionTable[i][j] + " ,");
+				System.out.print(transitionTable[i][j].states + " ,");
  			}
  			System.out.println("");
 		}
