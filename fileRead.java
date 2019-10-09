@@ -66,21 +66,29 @@ public class fileRead{
 		String userString;
 		//System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\nInitial State Set: " + iniStateSet + "\nFinal State Set: " + finStateSet + "\nTransition Sets: " + transitions);
 		
-		Transition[] transitionList = new Transition[transitions.size()];
+		LinkedList<Transition> transitionList = new LinkedList<Transition>();
 
-		System.out.println(stateSet + " & " + alphabetSet + " & " + iniStateSet + " & " + finStateSet);
-		System.out.println("The size of LinkedList transitions is: " + transitions.size() + "\nThe object contains: " + transitions);
+		//System.out.println(stateSet + " & " + alphabetSet + " & " + iniStateSet + " & " + finStateSet);
+		//System.out.println("The size of LinkedList transitions is: " + transitions.size() + "\nThe object contains: " + transitions);
 
 		for(int i=1; i<=transitions.size(); i++){
 			List<String> testingList = Arrays.asList(transitions.get(i-1).split("\\s*,\\s*|=>"));
-			Transition t1 = new Transition(testingList.get(0), testingList.get(1), testingList.get(2));
-			transitionList[i-1] = t1;
+			if(testingList.size() == 3){
+				//We assume a regular transition in file
+				Transition t1 = new Transition(testingList.get(0), testingList.get(1), testingList.get(2));
+				transitionList.add(t1);
+			}
+			else if(testingList.size() > 3){
+				for(int j=2; j<=testingList.size()-1; j++){
+					Transition t1 = new Transition(testingList.get(0), testingList.get(1), testingList.get(j));
+					transitionList.add(t1);
+				}
+			}
 		}
 
-		System.out.println("Transition number 1:\nOrigin: " + transitionList[0].getOrigin() + "\nInput: " + transitionList[0].getInput() + "\nDestination: " + transitionList[0].getDestination());
-		System.out.println("Transition number 3:\nOrigin: " + transitionList[2].getOrigin() + "\nInput: " + transitionList[2].getInput() + "\nDestination: " + transitionList[2].getDestination());
-		System.out.println("Transition number 5:\nOrigin: " + transitionList[4].getOrigin() + "\nInput: " + transitionList[4].getInput() + "\nDestination: " + transitionList[4].getDestination());
-		
+		//System.out.println("Transition number 1:\nOrigin: " + transitionList[0].getOrigin() + "\nInput: " + transitionList[0].getInput() + "\nDestination: " + transitionList[0].getDestination());
+		//System.out.println("Transition number 3:\nOrigin: " + transitionList[2].getOrigin() + "\nInput: " + transitionList[2].getInput() + "\nDestination: " + transitionList[2].getDestination());
+		//System.out.println("Transition number 5:\nOrigin: " + transitionList[4].getOrigin() + "\nInput: " + transitionList[4].getInput() + "\nDestination: " + transitionList[4].getDestination());
 
 		//Construction of NDFA-lambda
 
@@ -99,21 +107,21 @@ public class fileRead{
  			}
 		}
 
-		for(int i=0; i<transitionList.length; i++){
+		for(int i=0; i<transitionList.size(); i++){
 			//Origin transitionList[i].getOrigin()   transitionList[i].getInput()
-			StringBuilder sb = new StringBuilder(transitionList[i].getOrigin());
+			StringBuilder sb = new StringBuilder(transitionList.get(i).getOrigin());
 			sb.deleteCharAt(0);
 			int rowIndex = Integer.parseInt(sb.toString());
 			int columnIndex = -1;
 			for(int k=0; k<alphabetList.size(); k++){
-				if(alphabetList.get(k).equals(transitionList[i].getInput())){
+				if(alphabetList.get(k).equals(transitionList.get(i).getInput())){
 					columnIndex = k;
 				}
 			}
-			if(transitionList[i].getInput().equals("lmd")){
+			if(transitionList.get(i).getInput().equals("lmd")){
 				columnIndex = alphabetList.size();
 			}
-			sb = new StringBuilder(transitionList[i].getDestination());
+			sb = new StringBuilder(transitionList.get(i).getDestination());
 			sb.deleteCharAt(0);
 			int functionResult = Integer.parseInt(sb.toString());
 			transitionTable[rowIndex][columnIndex].addToList(functionResult);
