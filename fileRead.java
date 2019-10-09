@@ -12,6 +12,11 @@ public class fileRead{
 	static String finStateSet;
 	static LinkedList<String> transitions = new LinkedList<String>();
 
+	static List<String> stateList;
+	static List<String> alphabetList;
+	static List<String> iniStateList;
+	static List<String> finStateList;
+
 	public fileRead(String filename){
 		try{
 			FileInputStream fStream = new FileInputStream(filename);
@@ -44,6 +49,10 @@ public class fileRead{
 					}
 				}
 			}
+			stateList = Arrays.asList(stateSet.split("\\s*,\\s*"));
+			alphabetList = Arrays.asList(alphabetSet.split("\\s*,\\s*"));
+			iniStateList = Arrays.asList(iniStateSet.split("\\s*,\\s*"));
+			finStateList = Arrays.asList(finStateSet.split("\\s*,\\s*"));
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -57,11 +66,6 @@ public class fileRead{
 		String userString;
 		//System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\nInitial State Set: " + iniStateSet + "\nFinal State Set: " + finStateSet + "\nTransition Sets: " + transitions);
 		
-		List<String> stateList = Arrays.asList(stateSet.split("\\s*,\\s*"));
-		//System.out.println("Array of states: " + stateList + " where the first state is exclusively: " + stateList.get(0) + " and the second one is: " + stateList.get(1));
-		List<String> alphabetList = Arrays.asList(alphabetSet.split("\\s*,\\s*"));
-		List<String> iniStateList = Arrays.asList(iniStateSet.split("\\s*,\\s*"));
-		List<String> finStateList = Arrays.asList(finStateSet.split("\\s*,\\s*"));
 		Transition[] transitionList = new Transition[transitions.size()];
 
 		System.out.println(stateSet + " & " + alphabetSet + " & " + iniStateSet + " & " + finStateSet);
@@ -122,13 +126,67 @@ public class fileRead{
  			System.out.println("");
 		}
 
-		//System.out.println("Okay, so for the third transition received the parameters should be as follows:\nOrigin: " + transitionList[2].getOrigin() + "\nInput: " + transitionList[2].getInput() + "\nDestination: " + transitionList[2].getDestination());
+		System.out.println("Enter a string to validate.");
+		userString = in.nextLine();
 
-		//Validate user's input string
-
-		//System.out.println("Please enter the string to validate:");
-		//userString = in.nextLine();
-
-
+		if(extendedTransFunction(userString, transitionTable)){
+			System.out.println("String is accepted by the automaton.");
+		}
+		else{
+			System.out.println("String is rejected by the automaton.");
+		}
 	}
+
+
+	public static ResultSet transitionFunction(ResultSet initialState, String processChar, ResultSet[][] transitionTable){
+		ResultSet tfResult = new ResultSet(false, 0);
+		for(int i=0; i<initialState.states.size(); i++){
+			int columnIndex = -1;
+			for(int k=0; k<alphabetList.size(); k++){
+				if(alphabetList.get(k).equals(processChar)){
+					columnIndex = k;
+				}
+			}
+			if(processChar.equals("lmd")){
+				columnIndex = alphabetList.size();
+			}
+			ResultSet tTableRes = transitionTable[initialState.states.get(i)][columnIndex];
+			for(int j=0; j<tTableRes.states.size(); j++){
+				tfResult.addToList(tTableRes.states.get(j));
+			}
+		}
+		return tfResult;
+	}
+
+	public static boolean extendedTransFunction(String processString, ResultSet[][] transitionTable){
+		boolean acceptString = false;
+		StringBuilder sb = new StringBuilder(iniStateList.get(0));
+		sb.deleteCharAt(0);
+		ResultSet activeStates = new ResultSet(true, Integer.parseInt(sb.toString()));
+		for(int i=0; i<processString.length(); i++){
+			activeStates = transitionFunction(activeStates, "lmd", transitionTable);
+			activeStates = transitionFunction(activeStates, Character.toString(processString.charAt(i)), transitionTable);
+		}
+
+		//Parse ending state list
+		int[] stateCheck = new int[finStateList.size()];
+		for(int i=0; i<finStateList.size(); i++){
+			sb = new StringBuilder(finStateList.get(i));
+			sb.deleteCharAt(0);
+			stateCheck[i] = Integer.parseInt(sb.toString());
+		}
+
+		//Validate the final states with activeStates ResultSet
+		for(int i=0; i<activeStates.states.size(); i++){
+			for(int j=0; j<stateCheck.length; j++){
+				if(stateCheck[j] == activeStates.states.get(i)){
+					acceptString = true;
+				}
+			}
+		}
+		return acceptString;
+	}
+
+
+
 }

@@ -33,7 +33,7 @@ public class ResultSet{
 				foundCoincidence = true;
 			}
 		}
-		if(!foundCoincidence){
+		if(!foundCoincidence && integerCheck != -1){
 			states.add(integerCheck);
 		}
 	}
