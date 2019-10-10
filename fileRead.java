@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class fileRead{
+public class FileRead{
 
 	static String stateSet;
 	static String alphabetSet;
@@ -17,7 +17,7 @@ public class fileRead{
 	static List<String> iniStateList;
 	static List<String> finStateList;
 
-	public fileRead(String filename){
+	public FileRead(String filename){
 		try{
 			FileInputStream fStream = new FileInputStream(filename);
 			try(BufferedReader br = new BufferedReader(new InputStreamReader(fStream))){
@@ -59,11 +59,8 @@ public class fileRead{
 		}
 	}
 
-	public static void main(String[] args) {
-
-		fileRead fReader = new fileRead("samplehahae.txt");
-		Scanner in = new Scanner (System.in);
-		String userString;
+	public static boolean validateString(String inputString){
+		//fileRead fReader = new fileRead("samplehahae.txt");
 		//System.out.println("State Set: " + stateSet + "\nAlphabet Set: " + alphabetSet + "\nInitial State Set: " + iniStateSet + "\nFinal State Set: " + finStateSet + "\nTransition Sets: " + transitions);
 		
 		LinkedList<Transition> transitionList = new LinkedList<Transition>();
@@ -134,17 +131,13 @@ public class fileRead{
  			System.out.println("");
 		}
 
-		System.out.println("Enter a string to validate.");
-		userString = in.nextLine();
-
-		if(extendedTransFunction(userString, transitionTable)){
-			System.out.println("String is accepted by the automaton.");
+		if(extendedTransFunction(inputString, transitionTable)){
+			return true;
 		}
 		else{
-			System.out.println("String is rejected by the automaton.");
+			return false;
 		}
 	}
-
 
 	public static ResultSet transitionFunction(ResultSet initialState, String processChar, ResultSet[][] transitionTable){
 		ResultSet tfResult = new ResultSet(false, 0);
@@ -171,9 +164,14 @@ public class fileRead{
 		StringBuilder sb = new StringBuilder(iniStateList.get(0));
 		sb.deleteCharAt(0);
 		ResultSet activeStates = new ResultSet(true, Integer.parseInt(sb.toString()));
-		for(int i=0; i<processString.length(); i++){
-			activeStates = transitionFunction(activeStates, "lmd", transitionTable);
-			activeStates = transitionFunction(activeStates, Character.toString(processString.charAt(i)), transitionTable);
+		try{
+			for(int i=0; i<processString.length(); i++){
+				activeStates = transitionFunction(activeStates, "lmd", transitionTable);
+				activeStates = transitionFunction(activeStates, Character.toString(processString.charAt(i)), transitionTable);
+			}
+		}catch(Exception e){
+			System.out.println("Error found is: " + e);
+			activeStates = new ResultSet(false, -1);
 		}
 
 		//Parse ending state list
@@ -194,7 +192,5 @@ public class fileRead{
 		}
 		return acceptString;
 	}
-
-
 
 }
